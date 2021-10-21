@@ -141,7 +141,9 @@ let's clean this up!
 ```{r}
 marj_df <-
   table_marj %>%
+  # select all columns except those with P Value
   select(-contains("P Value")) %>%
+  # select all columns except "State"
   pivot_longer(
     -State,
     names_to = "age_year",
