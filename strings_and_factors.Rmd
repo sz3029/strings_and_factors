@@ -1,0 +1,51 @@
+---
+title: "Strings And Factors"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggridges)
+library(rvest)
+
+library(p8105.datasets)
+
+# General figure set up
+knitr::opts_chunk$set(
+  # display the code in github doc
+  echo = TRUE,
+  # hide warning messages
+  warning = FALSE,
+  # set the figure to be 8 x 6, and the proportion it takes to be 95%
+  fig.width = 10,
+  fig.height = 8, 
+  out.width = "95%"
+)
+
+# setting a global options for continuous data color family and a different format to set discrete data to have a color family
+options(
+  ggplot2.countinuous.colour = "viridis",
+  ggplot2.countinuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+
+# have a minimal theme and legends at the bottom
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+```
+
+## String and Regex
+
+```{r }
+string_vec = c("my", "name", "is", "jeff")
+```
+
+## Including Plots
+
+
+```{r }
+
+```
+
+
