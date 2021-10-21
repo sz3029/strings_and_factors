@@ -7,6 +7,7 @@ output: github_document
 library(tidyverse)
 library(ggridges)
 library(rvest)
+library(httr)
 
 library(p8105.datasets)
 
@@ -17,9 +18,9 @@ knitr::opts_chunk$set(
   # hide warning messages
   warning = FALSE,
   # set the figure to be 8 x 6, and the proportion it takes to be 95%
-  fig.width = 10,
-  fig.height = 8, 
-  out.width = "95%"
+  fig.width = 8,
+  fig.height = 6, 
+  out.width = "90%"
 )
 
 # setting a global options for continuous data color family and a different format to set discrete data to have a color family
@@ -115,7 +116,60 @@ str_detect(string_vec, "\\[")
 ```{r}
 vec_sex = factor(c("male", "male", "female", "female"))
 vec_sex
+
+as.numeric(vec_sex)
+
+vec_sex = fct_relevel(vec_sex, "male")
+vec_sex
+as.numeric(vec_sex)
 ```
+
+## NSDUH
+
+```{r}
+nsduh_url = "http://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm"
+
+table_marj = 
+  read_html(nsduh_url) %>% 
+  html_table() %>% 
+  first() %>%
+  slice(-1)
+```
+
+let's clean this up!
+
+```{r}
+marj_df <-
+  table_marj %>%
+  select(-contains("P Value")) %>%
+  pivot_longer(
+    -State,
+    names_to = "age_year",
+    values_to = "percent") %>%
+  separate(age_year, into = c("age", "year"), "\\(") %>%
+  # or separate(age_year, into = c("age", "year"), -11)
+  mutate(
+    year = str_replace(year, "\\(", ""),
+    precent = str_replace(percent, "[a-c]$", ""),
+    percent = as.numeric(percent)
+  ) %>%
+  filter(!(State %in% c("Total U.S.", "Northeast", "Midwest", "South", "West")))
+```
+
+Do dataframe stuff
+
+```{r}
+marj_df %>%
+  filter(age == "12-17") %>%
+  mutate(
+    State = fct_reorder(State, percent)
+  ) %>%
+  ggplot(aes(x = State, y = percent, color = year)) + 
+    geom_point() + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+
 
 
 
